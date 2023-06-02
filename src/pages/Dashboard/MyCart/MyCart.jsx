@@ -27,22 +27,23 @@ const MyCart = () => {
                 fetch(`http://localhost:5000/carts/${item._id}`, {
                     method: 'DELETE'
                 })
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log(data)
-                        if (data.deletedCount > 0) {
-                            Swal.fire(
-                                'Deleted!',
-                                'Your file has been deleted.',
-                                'success'
-                            )
-                            refetch();
-                        }
-                    })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data)
+                    if (data.deletedCount > 0) {
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        )
+                        refetch();
+                    }
+                })
             }
         })
     }
 
+    console.log(cart)
 
     return (
         <div>
@@ -90,8 +91,6 @@ const MyCart = () => {
                                     </td>
                                 </tr>)
                             }
-
-
                         </tbody>
 
                     </table>
