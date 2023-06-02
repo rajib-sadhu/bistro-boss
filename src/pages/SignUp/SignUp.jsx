@@ -36,13 +36,14 @@ const SignUp = () => {
                             .then(data => {
 
                                 if (data.insertedId) {
+                                    reset();
+                                    navigate("/")
                                     Swal.fire({
                                         icon: 'success',
                                         title: `Hello ${saveUser.name}`,
                                         text: 'Account create successfully'
                                     });
-                                    reset();
-                                    navigate("/")
+
                                 }
                             })
                     })

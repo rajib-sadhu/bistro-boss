@@ -5,13 +5,16 @@ import { ImSpoonKnife } from "react-icons/im";
 import { CgMenuGridR } from "react-icons/cg";
 // import { CgMenuLeft } from "react-icons/cg";
 import useCart from "../hooks/useCart";
+import useAdmin from "../hooks/useAdmin";
 
 const Dashboard = () => {
 
     const [cart] = useCart();
 
     // TODO: Load data from the server to have dynamic isAdmin based on user data
-    const isAdmin = true;
+    // const isAdmin = true;
+
+    const [isAdmin] = useAdmin();
 
     return (
         <div className="drawer drawer-mobile">

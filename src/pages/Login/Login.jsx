@@ -33,11 +33,12 @@ const Login = () => {
                 const user = result.user;
                 console.log(user);
                 Swal.fire({
-                    title: `<p> Welcome back ${user.displayName} </p>`,
+                    title: `<p className="text-red-600"> Welcome back ${user.displayName} </p>`,
                     // position: 'top-end',
                     icon: 'success'
                 });
                 navigate(from, {replace:true});
+                navigate("/")
                 form.reset();
             })
     }

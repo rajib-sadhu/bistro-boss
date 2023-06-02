@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
         })
     }
     const signIn = (email, password) => {
-        setLoading(true)
+        setLoading(true);
         return signInWithEmailAndPassword(auth, email, password);
     }
     const logOut = () => {
@@ -60,15 +60,14 @@ const AuthProvider = ({ children }) => {
                     .then(res => {
                         // console.log(res.data.token);
                         const token = res.data.token
-                        localStorage.setItem('access-token', token)
+                        localStorage.setItem('access-token', token);
+
+                        setLoading(false);
                     })
             }
-            else{
+            else {
                 localStorage.removeItem('access-token')
             }
-
-
-            setLoading(false);
         });
 
         return () => {
