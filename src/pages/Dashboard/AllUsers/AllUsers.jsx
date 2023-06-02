@@ -11,26 +11,27 @@ const AllUsers = () => {
         return res.json();
     });
 
-    const handleMakeAdmin = (user)=>{
-        fetch(`http://localhost:5000/users/admin/${user._id}`,{
-            method:'PATCH'
+    const handleMakeAdmin = (user) => {
+        fetch(`http://localhost:5000/users/admin/${user._id}`, {
+            method: 'PATCH'
         })
-        .then(res=>res.json())
-        .then(data=>{
-            console.log(data);
-            if(data.modifiedCount){
-                refetch();
-                Swal.fire({
-                    icon:'success',
-                    title:`${user.name} is Admin Now`,
-                    showConfirmButton: false,
-                    timer:1500
-                })
-            }
-        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.modifiedCount) {
+                    refetch();
+                    Swal.fire({
+                        icon: 'success',
+                        title: `${user.name} is Admin Now`,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            })
     }
 
     const handleDelete = (user) => {
+        console.log(user._id)
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -42,7 +43,7 @@ const AllUsers = () => {
         }).then((result) => {
             if (result.isConfirmed) {
 
-                fetch(`http://localhost:5000/users${user._id}`, {
+                fetch(`http://localhost:5000/users/${user._id}`, {
                     method: 'DELETE'
                 })
                     .then(res => res.json())
@@ -57,6 +58,7 @@ const AllUsers = () => {
                             refetch();
                         }
                     })
+                    .catch(err => console.log(err))
             }
         })
     }
@@ -76,6 +78,7 @@ const AllUsers = () => {
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Image</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th className="text-start" >Role</th>
@@ -91,14 +94,21 @@ const AllUsers = () => {
                                     <td>
                                         {index + 1}
                                     </td>
+                                    <td>
+                                        <div className="avatar">
+                                            <div className="mask mask-squircle w-12 h-12">
+                                                <img src={user?.photoURL} alt="Avatar Tailwind CSS Component" />
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td> {user?.name} </td>
                                     <td> {user?.email}</td>
-                                    <td className="text-start">{user?.role === 'admin' ? 
-                                    <button className="btn">
-                                        admin
-                                    </button>
-                                    :
-                                        <button onClick={()=>handleMakeAdmin(user)} className="btn hover:bg-orange-500 text-xl">
+                                    <td className="text-start">{user?.role === 'admin' ?
+                                        <button className="btn">
+                                            admin
+                                        </button>
+                                        :
+                                        <button onClick={() => handleMakeAdmin(user)} className="btn hover:bg-orange-500 text-xl">
                                             <FaUserShield />
                                         </button>
                                     }</td>

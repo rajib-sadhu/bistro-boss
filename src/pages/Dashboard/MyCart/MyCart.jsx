@@ -82,7 +82,6 @@ const MyCart = () => {
                                                 <img src={item?.image} alt="Avatar Tailwind CSS Component" />
                                             </div>
                                         </div>
-
                                     </td>
                                     <td> {item?.name}</td>
                                     <td className="text-start"> ${item?.price.toFixed(2)}</td>

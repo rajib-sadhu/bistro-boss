@@ -23,7 +23,7 @@ const SignUp = () => {
                 addNamePhoto(loggedUser, data.name, data.photoURL)
                     .then(() => {
 
-                        const saveUser = { name: data.name, email: data.email, photoURL: data.photoURL }
+                        const saveUser = { name: data.name, email: data.email, photoURL: data.photoURL || 'https://www.pngitem.com/pimgs/m/22-223968_default-profile-picture-circle-hd-png-download.png' }
 
                         fetch(`http://localhost:5000/users`, {
                             method: 'POST',
