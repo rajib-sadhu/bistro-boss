@@ -56,6 +56,18 @@ async function run() {
     const reviewsCollection = client.db('bistroDB').collection('reviews');
     const cartCollection = client.db('bistroDB').collection('cart');
 
+    // Warning : use verifyJwt before using verifyAdmin
+    const verifyAdmin = async (req, res, next)=>{
+      const email = req.decoded.email;
+      const query = {email:email};
+      const user = await usersCollection.findOne(query);
+
+      if(user?.role !== 'admin'){
+        return res.status(403).send({ error: true, message: 'forbidden access' })
+      }
+      next();
+    }
+
 
     app.post('/jwt', (req, res) => {
       const user = req.body;
@@ -64,8 +76,14 @@ async function run() {
     })
 
 
+    /*
+    * 1. do not show secure links to those who should not see the links
+    * 2. use jwt token: verifyJwt
+    * * use verifyAdmin middleware 
+    */
     // Users
-    app.get('/users', async (req, res) => {
+    app.get('/users', verifyJwt, verifyAdmin, async (req, res) => {
+
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
@@ -83,11 +101,29 @@ async function run() {
 
     app.delete('/users/:id', async (req, res) => {
       const id = req.params.id;
-      console.log(id)
+      console.log('delete users',id)
       const query = { _id: new ObjectId(id) }
       const result = await usersCollection.deleteOne(query);
       res.send(result);
     });
+
+
+    // Security layer1 = verifyJwt 
+    // layer2 = email
+    // layer3 = admin
+
+    app.get('/users/admin/:email', verifyJwt, async (req, res) => {
+      const email = req.params.email;
+
+      if (req.decoded.email !== email) {
+        return res.send({ admin: false })
+      }
+
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      const result = { admin: user?.role === 'admin' };
+      res.send(result);
+    })
 
     app.patch('/users/admin/:id', async (req, res) => {
 
@@ -100,7 +136,6 @@ async function run() {
       }
       const result = await usersCollection.updateOne(filter, updateRole);
       res.send(result)
-
     });
 
     // Menu
