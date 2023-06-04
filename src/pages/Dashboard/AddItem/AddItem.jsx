@@ -18,7 +18,9 @@ const AddItem = () => {
     const onSubmit = data => {
 
         const formData = new FormData();
+        console.log('before formData-', formData)
         formData.append('image', data.image[0]);
+        console.log('after append formData-', formData)
 
         Swal.fire({
             // icon: 'success',
@@ -74,7 +76,7 @@ const AddItem = () => {
     console.log(errors);
 
     return (
-        <div className="px-10 mx-auto -mt-12">
+        <div className="px-10 mx-auto -mt-10">
             <SectionTitle subHeading="What's new" heading="Add an item" />
 
             <div className="">
