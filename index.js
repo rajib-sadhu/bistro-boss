@@ -7,6 +7,10 @@ const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 5000;
 
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
+
+
+
 
 // middleware
 app.use(cors());
@@ -55,14 +59,15 @@ async function run() {
     const menuCollection = client.db('bistroDB').collection('menu');
     const reviewsCollection = client.db('bistroDB').collection('reviews');
     const cartCollection = client.db('bistroDB').collection('cart');
+    const paymentCollection = client.db('bistroDB').collection('payment');
 
     // Warning : use verifyJwt before using verifyAdmin
-    const verifyAdmin = async (req, res, next)=>{
+    const verifyAdmin = async (req, res, next) => {
       const email = req.decoded.email;
-      const query = {email:email};
+      const query = { email: email };
       const user = await usersCollection.findOne(query);
 
-      if(user?.role !== 'admin'){
+      if (user?.role !== 'admin') {
         return res.status(403).send({ error: true, message: 'forbidden access' })
       }
       next();
@@ -101,7 +106,7 @@ async function run() {
 
     app.delete('/users/:id', async (req, res) => {
       const id = req.params.id;
-      console.log('delete users',id)
+      console.log('delete users', id)
       const query = { _id: new ObjectId(id) }
       const result = await usersCollection.deleteOne(query);
       res.send(result);
@@ -140,9 +145,23 @@ async function run() {
 
     // Menu
     app.get('/menu', async (req, res) => {
-
       const result = await menuCollection.find().toArray();
       res.send(result);
+    });
+
+    app.delete('/menu/:id', verifyJwt, verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await menuCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    app.post('/menu', verifyJwt, verifyAdmin, async (req, res) => {
+
+      const newItem = req.body;
+      const result = await menuCollection.insertOne(newItem);
+      res.send(result)
+
     });
 
     // Reviews
@@ -188,6 +207,35 @@ async function run() {
     });
 
 
+    // create payment intent
+    app.post('/create-payment-intent', verifyJwt, async (req, res) => {
+      const { price } = req.body;
+      const amount = price * 100;
+      // console.log(price, amount)
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'inr',
+        payment_method_types: ['card']
+      })
+      res.send({
+        clientSecret: paymentIntent.client_secret
+      })
+    })
+
+    //Payments Api
+    app.post('/payments', verifyJwt, async (req, res) => {
+      const payment = req.body;
+      const insertResult = paymentCollection.insertOne(payment);
+
+      const query = { _id: { $in: payment.cartItems.map(id => new ObjectId(id)) } };
+
+      const deleteResult = await cartCollection.deleteMany(query);
+
+      res.send({
+        insertResult,
+        deleteResult
+      });
+    })
 
 
 
