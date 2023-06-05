@@ -3,6 +3,7 @@ import useCart from "../../../hooks/useCart";
 
 import { FaTrash } from 'react-icons/fa';
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 
 const MyCart = () => {
@@ -53,7 +54,7 @@ const MyCart = () => {
             <div className="flex justify-evenly uppercase font-semibold mb-5 text-3xl">
                 <h3 className="" >Total Items: {cart.length}</h3>
                 <h3 className="" >Total Price: ${total.toFixed(2)}</h3>
-                <button className="btn btn-warning btn-sm" >Pay</button>
+                <Link to={`/dashboard/payment`} ><button className="btn btn-warning btn-sm" >Pay</button></Link>
             </div>
             <div>
                 <div className="overflow-x-auto">
