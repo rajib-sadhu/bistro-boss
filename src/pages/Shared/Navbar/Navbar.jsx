@@ -5,11 +5,12 @@ import Swal from "sweetalert2";
 
 import { BsFillCartFill } from 'react-icons/bs'
 import useCart from "../../../hooks/useCart";
+import useAdmin from "../../../hooks/useAdmin";
 
 const Navbar = () => {
 
     const { user, logOut } = useContext(AuthContext);
-
+    const [isAdmin] = useAdmin();
     const [cart] = useCart();
 
     const handleLogOut = () => {
@@ -37,6 +38,9 @@ const Navbar = () => {
             <Link to={'/order/salad'} >Order Food</Link>
         </li>
         <li>
+            <Link to={isAdmin?'/dashboard/adminHome' : '/dashboard/userHome'} >Dashboard</Link>
+        </li>
+        <li>
             <Link to="/dashboard/myCart" >
                 <button className="btn">
                     <BsFillCartFill />
@@ -48,9 +52,6 @@ const Navbar = () => {
             {
                 user ? <> <button onClick={handleLogOut} className="" >Logout</button> </> : <> <Link to={'/login'} >Login</Link> </>
             }
-        </li>
-        <li>
-            <Link to={'/secret'} >Secret</Link>
         </li>
 
     </>
